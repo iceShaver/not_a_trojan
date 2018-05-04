@@ -1,0 +1,10 @@
+#ifndef SERVERSTATE_HH
+#define SERVERSTATE_HH
+
+enum class ServerState {
+	UNINITIALIZED,
+	RUNNING,
+	PAUSED,
+	TERMINATED
+};
+#endif // SERVERSTATE_HH
