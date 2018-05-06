@@ -10,10 +10,10 @@
 #include "SocketListener.h"
 #include <iostream>
 #include "WinapiHelpers.hh"
-#include "ClientHandler.h"
+#include "ClientHandler.hh"
 #include <future>
 #include "ServerConfig.hh"
-#include "tools.hh"
+#include "Tools.hh"
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -25,7 +25,7 @@ SocketListener::SocketListener(ServerWindow *pMainWindow)
 
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData)) {
 
-		this->pMainWindow->EmergencyExit(Winapi::getWinsocksErrorMessage());
+		this->pMainWindow->EmergencyExit(Winapi::GetWinsocksErrorMessage());
 		return;
 	}
 	addrinfo *result = NULL;
@@ -37,7 +37,7 @@ SocketListener::SocketListener(ServerWindow *pMainWindow)
 	hints.ai_flags = AI_PASSIVE;
 
 	if (getaddrinfo(NULL, ServerConfig::LISTEN_PORT, &hints, &result)) {
-		auto message = "getaddrinfo failed: " + Winapi::getWinsocksErrorMessage();
+		auto message = "getaddrinfo failed: " + Winapi::GetWinsocksErrorMessage();
 		WSACleanup();
 		this->pMainWindow->EmergencyExit(message);
 		return;
@@ -45,7 +45,7 @@ SocketListener::SocketListener(ServerWindow *pMainWindow)
 
 	this->listenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol); // CREATE SOCKET
 	if (this->listenSocket == INVALID_SOCKET) {
-		auto message = "Error at socket(): " + Winapi::getWinsocksErrorMessage();
+		auto message = "Error at socket(): " + Winapi::GetWinsocksErrorMessage();
 		freeaddrinfo(result);
 		WSACleanup();
 		this->pMainWindow->EmergencyExit(message);
@@ -54,7 +54,7 @@ SocketListener::SocketListener(ServerWindow *pMainWindow)
 
 
 	if (bind(this->listenSocket, result->ai_addr, (int)result->ai_addrlen) == SOCKET_ERROR) { // BIND SOCKET WITH NAME(IP, port)
-		auto message = "bind failed with error: " + Winapi::getWinsocksErrorMessage();
+		auto message = "bind failed with error: " + Winapi::GetWinsocksErrorMessage();
 		freeaddrinfo(result);
 		closesocket(this->listenSocket);
 		WSACleanup();
@@ -63,7 +63,7 @@ SocketListener::SocketListener(ServerWindow *pMainWindow)
 	}
 	freeaddrinfo(result);
 	if (listen(this->listenSocket, SOMAXCONN) == SOCKET_ERROR) { // LISTENING MODE
-		auto message = "listen failed with error: " + Winapi::getWinsocksErrorMessage();
+		auto message = "listen failed with error: " + Winapi::GetWinsocksErrorMessage();
 		closesocket(this->listenSocket);
 		WSACleanup();
 		this->pMainWindow->EmergencyExit(message);
@@ -85,7 +85,7 @@ void SocketListener::BlockingListen() {
 		SOCKET clientSocket = INVALID_SOCKET;
 		Tools::PrintDebugMessage("Waiting for connection");
 		if ((clientSocket = accept(this->listenSocket, NULL, NULL)) == INVALID_SOCKET) {
-			auto message = "accept failed with error: " + Winapi::getWinsocksErrorMessage();
+			auto message = "accept failed with error: " + Winapi::GetWinsocksErrorMessage();
 			closesocket(this->listenSocket);
 			WSACleanup();
 			this->pMainWindow->EmergencyExit(message);
@@ -93,6 +93,7 @@ void SocketListener::BlockingListen() {
 		Tools::PrintDebugMessage("Connection accepted");
 		connections.push_back(std::async(std::launch::async, [clientSocket]() {
 			ClientHandler clientHandler = ClientHandler(clientSocket);
+			clientHandler.Handle();
 		}));
 	}
 }

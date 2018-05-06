@@ -30,6 +30,12 @@
     <ClCompile Include="Tools.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Process.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataType.hh">
@@ -57,6 +63,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Tools.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Process.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExitCodes.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Metadata.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

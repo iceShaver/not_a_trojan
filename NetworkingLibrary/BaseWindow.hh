@@ -19,7 +19,7 @@ public:
 
 	static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	BaseWindow() : m_hwnd(nullptr) {}
+	BaseWindow() : hwnd(nullptr) {}
 
 	BOOL Create(
 		PCWSTR lpWindowName,
@@ -33,14 +33,14 @@ public:
 		HMENU hMenu = nullptr);
 
 	void Show(int nCmdShow) const;
-	HWND Window()const { return m_hwnd; }
+	HWND Window()const { return hwnd; }
 
 protected:
 	virtual PCWSTR ClassName()const = 0;
 
 	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
 
-	HWND m_hwnd;
+	HWND hwnd;
 };
 
 template <class DERIVED_TYPE>
@@ -50,7 +50,7 @@ LRESULT BaseWindow<DERIVED_TYPE>::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, L
 		auto pCreateStruct = (CREATESTRUCT*)lParam;
 		pThis = (DERIVED_TYPE*)pCreateStruct->lpCreateParams;
 		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)pThis);
-		pThis->m_hwnd = hwnd;
+		pThis->hwnd = hwnd;
 	}
 	else {
 		pThis = (DERIVED_TYPE*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
@@ -78,15 +78,15 @@ BOOL BaseWindow<DERIVED_TYPE>::Create(
 	wc.hInstance = GetModuleHandle(nullptr);
 	wc.lpszClassName = ClassName();
 	RegisterClass(&wc);
-	m_hwnd = CreateWindowEx(
+	hwnd = CreateWindowEx(
 		dwExStyle, ClassName(), lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, GetModuleHandle(nullptr),
 		this
 	);
-	if(!m_hwnd) {
-		throw WindowCreationException("Error has occured while creating new window: " + Winapi::getErrorMessage());
+	if(!hwnd) {
+		throw WindowCreationException("Error has occured while creating new window: " + Winapi::GetErrorMessage());
 	}
-	return (m_hwnd ? TRUE : FALSE);
+	return (hwnd ? TRUE : FALSE);
 }
 
 template <class DERIVED_TYPE>
-void BaseWindow<DERIVED_TYPE>::Show(int nCmdShow) const { ShowWindow(m_hwnd, nCmdShow); }
+void BaseWindow<DERIVED_TYPE>::Show(int nCmdShow) const { ShowWindow(hwnd, nCmdShow); }

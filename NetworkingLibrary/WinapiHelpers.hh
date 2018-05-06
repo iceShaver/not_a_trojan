@@ -8,6 +8,6 @@
 #include <Windows.h>
 
 namespace Winapi {
-	std::string getErrorMessage();
-	std::string getWinsocksErrorMessage();
+	std::string GetErrorMessage();
+	std::string GetWinsocksErrorMessage();
 }

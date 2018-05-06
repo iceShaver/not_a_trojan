@@ -78,3 +78,11 @@ public:
 
 	WindowCreationException() = default;
 };
+class ClipboardListenerException : public Exception {
+
+public:
+	explicit ClipboardListenerException(const std::string& message)
+		: Exception(message) {}
+
+	ClipboardListenerException() = default;
+};

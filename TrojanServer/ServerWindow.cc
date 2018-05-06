@@ -11,19 +11,19 @@ LRESULT ServerWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	case WM_PAINT:
 		{
 		PAINTSTRUCT ps;
-		HDC hdc = BeginPaint(m_hwnd, &ps);
+		HDC hdc = BeginPaint(this->hwnd, &ps);
 		FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW + 1));
-		EndPaint(m_hwnd, &ps);
+		EndPaint(this->hwnd, &ps);
 		}
 		return 0;
 	default:
-		return DefWindowProc(m_hwnd, uMsg, wParam, lParam);
+		return DefWindowProc(this->hwnd, uMsg, wParam, lParam);
 	}
 }
 
 void ServerWindow::EmergencyExit(std::string message) {
 	std::cerr << "EmergencyExit called!\n" << message << std::endl;
 	system("pause");
-	SendMessage(this->m_hwnd, WM_CLOSE, NULL, NULL);
+	SendMessage(this->hwnd, WM_CLOSE, NULL, NULL);
 }
 

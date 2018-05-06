@@ -25,7 +25,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR lpCmdLine, int nCmdSho
 #endif // _DEBUG
 	auto mainWindow = ServerWindow();
 	if (!mainWindow.Create(ServerConfig::WND_TITLE, WS_OVERLAPPEDWINDOW)) {
-		std::cerr << Winapi::getErrorMessage() << std::endl;
+		std::cerr << Winapi::GetErrorMessage() << std::endl;
 		return 0;
 	}
 	//mainWindow.Show(nCmdShow);
@@ -33,7 +33,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR lpCmdLine, int nCmdSho
 		SocketListener socketListener = SocketListener(&mainWindow);
 		socketListener.BlockingListen();
 	});
-	
 	
 	// message loop
 	MSG msg = {};

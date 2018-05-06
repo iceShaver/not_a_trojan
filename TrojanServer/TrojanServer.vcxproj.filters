@@ -38,9 +38,6 @@
     <ClInclude Include="SocketListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ClientHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ServerWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -51,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TrojanServer.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientHandler.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,6 @@
 #include "WinapiHelpers.hh"
 
-std::string Winapi::getErrorMessage() {
+std::string Winapi::GetErrorMessage() {
 	//Get the error message, if any.
 	const auto errorMessageID = ::GetLastError();
 	if (errorMessageID == 0)
@@ -18,7 +18,7 @@ std::string Winapi::getErrorMessage() {
 
 	return message;
 }
-std::string Winapi::getWinsocksErrorMessage() {
+std::string Winapi::GetWinsocksErrorMessage() {
 	//Get the error message, if any.
 	const auto errorMessageID = ::WSAGetLastError();
 	if (errorMessageID == 0)

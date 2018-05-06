@@ -5,17 +5,21 @@
 #else  
 #define NETWORKINGLIBRARY_API __declspec(dllimport)   
 #endif  
+#ifndef UNICODE
+#define UNICODE
+#endif
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 #include <string>
 #include "IpAddress.hh"
-#include <windows.h>
 #include <winsock2.h>
-#include <MSWSock.h>
 #include <ws2tcpip.h>
-#include <iphlpapi.h>
-#include <iostream>
+#include <windows.h>
+
 #include <future>
-#include <minwinbase.h>
 #include "DataType.hh"
+#include "Metadata.hh"
 #pragma comment(lib, "Ws2_32.lib")
 enum class SocketType {
 	SERVER_SOCKET,
@@ -33,10 +37,13 @@ public:
 	int SendString(std::string data);
 	int SendBytes(const char * data, int length);
 	int SendTypeId(DataType type);
+	int SendMetadata(Metadata metadata);
 	template<typename T>
 	int sendObject(T data);
 	int Recv();
 	~Socket();
+	Metadata RecvMetadata();
+	std::string RecvString(const Metadata& metadata);
 private:
 	int send(const char * buf, int length);
 	SOCKET socket;

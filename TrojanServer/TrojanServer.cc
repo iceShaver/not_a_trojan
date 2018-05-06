@@ -16,7 +16,7 @@
 //		nullptr,				// hInstance
 //		nullptr					// lpParam
 //	);
-//	std::cout << Winapi::getErrorMessage() << std::endl;
+//	std::cout << Winapi::GetErrorMessage() << std::endl;
 //	ShowWindow(this->mainWindowHandle, SW_SHOW);
 //	this->run();
 //}

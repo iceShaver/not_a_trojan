@@ -39,13 +39,13 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -117,7 +117,9 @@
   <ItemGroup>
     <ClCompile Include="Console.cc" />
     <ClCompile Include="IpAddress.cc" />
+    <ClCompile Include="Process.cc" />
     <ClCompile Include="Socket.cc" />
+    <ClCompile Include="Thread.cc" />
     <ClCompile Include="Tools.cc" />
     <ClCompile Include="WinapiHelpers.cc" />
   </ItemGroup>
@@ -126,9 +128,13 @@
     <ClInclude Include="Console.hh" />
     <ClInclude Include="DataType.hh" />
     <ClInclude Include="Exceptions.hh" />
+    <ClInclude Include="ExitCodes.hh" />
     <ClInclude Include="IpAddress.hh" />
+    <ClInclude Include="Metadata.hh" />
+    <ClInclude Include="Process.hh" />
     <ClInclude Include="Socket.hh" />
     <ClInclude Include="StringTools.hh" />
+    <ClInclude Include="Thread.hh" />
     <ClInclude Include="Tools.hh" />
     <ClInclude Include="WinapiHelpers.hh" />
   </ItemGroup>

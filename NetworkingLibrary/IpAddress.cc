@@ -19,6 +19,13 @@ IpAddress::IpAddress(const std::string& addr) : addr(0) {
 		throw IPAddressParseException("String to IpAddress parsing error: "s + e.what());
 	}
 }
+
+IpAddress::IpAddress(int addr) {
+	this->addr = addr;
+}
+
+IpAddress::IpAddress(sockaddr addr) : IpAddress(IpAddress::SockaddrToString(addr)) {}
+
 IpAddress::IpAddress(unsigned char a, unsigned char b, unsigned char c, unsigned char d) : addr(0) {
 	addr |= a << 24;
 	addr |= b << 16;
@@ -46,5 +53,27 @@ IpAddress::operator std::string()const {
 
 
 IpAddress::operator uint32_t()const { return addr; }
+std::string IpAddress::SockaddrToString(sockaddr addr) {
+	char *s = NULL;
+	switch (addr.sa_family) {
+	case AF_INET: {
+		struct sockaddr_in *addr_in = (sockaddr_in *)&addr;
+		s = (char*)malloc(INET_ADDRSTRLEN);
+		inet_ntop(AF_INET, &(addr_in->sin_addr), s, INET_ADDRSTRLEN);
+		break;
+	}
+	case AF_INET6: {
+		struct sockaddr_in6 *addr_in6 = (sockaddr_in6 *)&addr;
+		s = (char*)malloc(INET6_ADDRSTRLEN);
+		inet_ntop(AF_INET6, &(addr_in6->sin6_addr), s, INET6_ADDRSTRLEN);
+		break;
+	}
+	default:
+		break;
+	}
+	auto result = std::string{ s };
+	free(s);
+	return result;
+}
 
 const IpAddress IpAddress::LOCALHOST{ 127,0,0,1 };

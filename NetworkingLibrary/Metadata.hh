@@ -4,15 +4,11 @@
 #else  
 #define NETWORKINGLIBRARY_API __declspec(dllimport)
 #endif  
-#include <Windows.h>
+#include "DataType.hh"
 #pragma pack(push, 1)
-enum class DataType : BYTE {
-	STRING,
-	INT32,
-	CLIPBOARD_STRING,
-	ACCOUNT_SWAP_NOTIFICATION,	
-	SCREENSHOT,
-	CHANGE_ACCOUNT_NUMBER,
-
+struct Metadata
+{
+	DataType dataType;
+	size_t length;
 };
 #pragma pack(pop)
