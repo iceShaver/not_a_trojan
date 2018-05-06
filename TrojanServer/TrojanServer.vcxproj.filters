@@ -27,30 +27,18 @@
     <ClCompile Include="SocketListener.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TrojanServer.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ServerState.hh">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SocketListener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ServerWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ServerConfig.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Type.hh">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TrojanServer.hh">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ClientHandler.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerWindow.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SocketListener.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

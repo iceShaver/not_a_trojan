@@ -125,16 +125,12 @@
     <ClCompile Include="ServerMain.cc" />
     <ClCompile Include="ServerWindow.cc" />
     <ClCompile Include="SocketListener.cc" />
-    <ClCompile Include="TrojanServer.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientHandler.hh" />
     <ClInclude Include="ServerConfig.hh" />
-    <ClInclude Include="ServerWindow.h" />
-    <ClInclude Include="ServerState.hh" />
-    <ClInclude Include="SocketListener.h" />
-    <ClInclude Include="TrojanServer.hh" />
-    <ClInclude Include="Type.hh" />
+    <ClInclude Include="ServerWindow.hh" />
+    <ClInclude Include="SocketListener.hh" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetworkingLibrary\NetworkingLibrary.vcxproj">

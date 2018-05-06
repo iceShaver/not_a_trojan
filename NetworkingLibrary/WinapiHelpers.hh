@@ -6,8 +6,13 @@
 #endif 
 #include <string>
 #include <Windows.h>
+#include <vector>
 
 namespace Winapi {
 	std::string GetErrorMessage();
 	std::string GetWinsocksErrorMessage();
+	int GetEncoderClsid(const WCHAR *format, CLSID *pClsid);
+	std::vector<char> GetScreenshotAsJpegBytes(std::wstring filename, ULONG uQuality = 100);
+
+
 }

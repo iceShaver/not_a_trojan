@@ -1,6 +1,10 @@
-#include "ServerWindow.h"
+#include "ServerWindow.hh"
 #include <iostream>
+#include "Button.hh"
 
+ServerWindow::ServerWindow() {
+	
+}
 PCWSTR ServerWindow::ClassName() const { return L"SampleWindowClass"; }
 
 LRESULT ServerWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -20,10 +24,3 @@ LRESULT ServerWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		return DefWindowProc(this->hwnd, uMsg, wParam, lParam);
 	}
 }
-
-void ServerWindow::EmergencyExit(std::string message) {
-	std::cerr << "EmergencyExit called!\n" << message << std::endl;
-	system("pause");
-	SendMessage(this->hwnd, WM_CLOSE, NULL, NULL);
-}
-

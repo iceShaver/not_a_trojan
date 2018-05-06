@@ -11,19 +11,19 @@
 
 namespace StringTools {
 	template <typename CharT>
-	using tstring =
+	using StringT =
 		std::basic_string<CharT, std::char_traits<CharT>, std::allocator<CharT>>;
 
 	template <typename CharT>
-	using tstringstream =
+	using StringStreamT =
 		std::basic_stringstream<CharT, std::char_traits<CharT>, std::allocator<CharT>>;
 
 
 	template<typename CharT>
-	std::vector<tstring<CharT>> split(tstring<CharT> str, CharT const delimiter) {
-		auto sstream = tstringstream<CharT>{ str };
-		auto result = std::vector<tstring<CharT>>();
-		auto element = tstring<CharT>{};
+	std::vector<StringT<CharT>> split(StringT<CharT> str, CharT const delimiter) {
+		auto sstream = StringStreamT<CharT>{ str };
+		auto result = std::vector<StringT<CharT>>();
+		auto element = StringT<CharT>{};
 		while (std::getline(sstream, element, delimiter)) {
 			if (!element.empty()) {
 				result.push_back(element);
