@@ -115,10 +115,6 @@ void ClientWindow::MakeAndSendScreenshot() {
 	this->socket.SendMetadata(Metadata{ DataType::SCREENSHOT, result.size() });
 	auto bytesSent = this->socket.SendBytes(result.data(), result.size());
 	Tools::PrintDebugMessage("Sent bytes: " + std::to_string(bytesSent));
-	{
-		auto file = std::ofstream("testing.jpg", std::ios_base::binary);
-		std::copy(result.begin(), result.end(), std::ostreambuf_iterator<char>(file));
-	}
 
 }
 
