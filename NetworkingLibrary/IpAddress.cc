@@ -3,6 +3,7 @@
 #include "Exceptions.hh"
 #include <sstream>
 #include <iostream>
+#include <codecvt>
 
 IpAddress::IpAddress() : addr(0) {}
 
@@ -50,6 +51,10 @@ IpAddress::operator std::string()const {
 	return result.str();
 }
 
+IpAddress::operator std::wstring() const {
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> wstringConvert;
+	return wstringConvert.from_bytes((std::string)*this);
+}
 
 
 IpAddress::operator uint32_t()const { return addr; }

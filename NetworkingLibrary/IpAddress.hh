@@ -30,6 +30,7 @@ public:
 	IpAddress(unsigned char a, unsigned char b, unsigned char c, unsigned char d);
 	~IpAddress();
 	explicit operator std::string() const;
+	explicit operator std::wstring()const;
 	explicit operator uint32_t () const;
 	static const IpAddress LOCALHOST;
 	static std::string SockaddrToString(sockaddr);

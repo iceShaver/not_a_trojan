@@ -18,13 +18,13 @@
     <ClCompile Include="ServerMain.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ClientHandler.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ServerWindow.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SocketListener.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientHandlerWindow.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,13 +32,13 @@
     <ClInclude Include="ServerConfig.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ClientHandler.hh">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ServerWindow.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SocketListener.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientHandlerWindow.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

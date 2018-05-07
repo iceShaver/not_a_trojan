@@ -24,11 +24,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR lpCmdLine, int nCmdSho
 #ifdef _DEBUG
 	Console::CreateConsole();
 #endif // _DEBUG
-	auto mainWindow = ServerWindow();
+	auto mainWindow = ServerWindow(hInstance);
 	if (!mainWindow.Create(ServerConfig::WND_TITLE, WS_OVERLAPPEDWINDOW)) {
 		throw WindowCreationException(Winapi::GetErrorMessage());
 	}
-	mainWindow.Show(nCmdShow);
+	//mainWindow.Show(nCmdShow);
 
 	// listen for clients
 	auto socketListenerThread = std::thread([&]() {

@@ -15,11 +15,11 @@
 template <class DERIVED_TYPE>
 class BaseWindow {
 public:
-	virtual ~BaseWindow() = default;
+	virtual ~BaseWindow();
 
 	static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	BaseWindow() : hwnd(nullptr) {}
+	explicit BaseWindow(HINSTANCE hInstance = NULL) : hwnd(nullptr), hInstance(hInstance) {}
 
 	BOOL Create(
 		PCWSTR lpWindowName,
@@ -41,7 +41,13 @@ protected:
 	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
 
 	HWND hwnd;
+	HINSTANCE hInstance;
 };
+
+template <class DERIVED_TYPE>
+BaseWindow<DERIVED_TYPE>::~BaseWindow() {
+	::PostMessage(this->hwnd, WM_CLOSE, 0, 0);
+}
 
 template <class DERIVED_TYPE>
 LRESULT BaseWindow<DERIVED_TYPE>::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -77,6 +83,7 @@ BOOL BaseWindow<DERIVED_TYPE>::Create(
 	wc.lpfnWndProc = DERIVED_TYPE::WndProc;
 	wc.hInstance = GetModuleHandle(nullptr);
 	wc.lpszClassName = ClassName();
+	wc.hCursor = LoadCursor(NULL, MAKEINTRESOURCE(230));
 	RegisterClass(&wc);
 	hwnd = CreateWindowEx(
 		dwExStyle, ClassName(), lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, GetModuleHandle(nullptr),

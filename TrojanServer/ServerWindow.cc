@@ -1,10 +1,6 @@
 #include "ServerWindow.hh"
 #include <iostream>
-#include "Button.hh"
 
-ServerWindow::ServerWindow() {
-	
-}
 PCWSTR ServerWindow::ClassName() const { return L"SampleWindowClass"; }
 
 LRESULT ServerWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {

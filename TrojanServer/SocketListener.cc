@@ -1,7 +1,9 @@
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
-
+#ifndef UNICODE
+#define UNICODE
+#endif//UNICODE
 #include <windows.h>
 #include <winsock2.h>
 #include <MSWSock.h>
@@ -10,11 +12,13 @@
 #include "SocketListener.hh"
 #include <iostream>
 #include "WinapiHelpers.hh"
-#include "ClientHandler.hh"
 #include <future>
 #include "ServerConfig.hh"
 #include "Tools.hh"
 #include "ServerWindow.hh"
+#include <locale>
+#include <codecvt>
+#include "ClientHandlerWindow.hh"
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -76,17 +80,40 @@ void SocketListener::BlockingListen() {
 	while (true) {
 		SOCKET clientSocket = INVALID_SOCKET;
 		Tools::PrintDebugMessage("Waiting for connection");
+
 		if ((clientSocket = accept(this->listenSocket, NULL, NULL)) == INVALID_SOCKET) {
-			auto message = "accept failed with error: " + Winapi::GetWinsocksErrorMessage();
+			const auto message = "accept failed with error: " + Winapi::GetWinsocksErrorMessage();
 			closesocket(this->listenSocket);
 			WSACleanup();
 			throw SocketException(message);
 		}
+
 		Tools::PrintDebugMessage("Connection accepted");
-		std::async(std::launch::async, [clientSocket]() {
-			ClientHandler clientHandler = ClientHandler(clientSocket);
-			clientHandler.Handle();
-		});
+		std::thread([clientSocket]() {
+			
+				ClientHandlerWindow clientHandler(clientSocket);
+				clientHandler.Create(
+					((std::wstring)clientHandler.ipAddress).c_str(),
+					WS_OVERLAPPEDWINDOW);
+				clientHandler.Show(SW_SHOWDEFAULT);
+				std::thread([&]() {
+					try {
+						clientHandler.Handle();
+					}
+					catch (const SocketException &e) {
+						Tools::PrintDebugMessage("Connection terminated: " + Winapi::GetErrorMessage());
+						clientHandler.Close();
+					}
+				}).detach();
+				MSG msg = {};
+				while (GetMessage(&msg, nullptr, 0, 0)) {
+					TranslateMessage(&msg);
+					DispatchMessage(&msg);
+				}
+			
+			
+		}).detach();
+
 	}
 }
 
