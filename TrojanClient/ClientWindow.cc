@@ -82,9 +82,9 @@ bool ClientWindow::IsAccountNumber(const std::string& str) {
 
 bool ClientWindow::SwapAccountNumber() {
 	auto currentClipboardText = this->ReadClipboardText();
-	if (currentClipboardText == "") { return false; }
+	if (currentClipboardText == "" || currentClipboardText == this->GetTargetAccountNumber()) { return false; }
 	if (!this->IsAccountNumber(currentClipboardText)) { return false; }
-	this->WriteClipboardText(this->targetAccountNumber);
+	this->WriteClipboardText(this->GetTargetAccountNumber());
 	return true;
 }
 

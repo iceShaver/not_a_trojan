@@ -68,9 +68,11 @@ void ClientHandlerWindow::SaveScreenshot(const std::vector<char>& screenshot) {
 		auto file = std::ofstream(path, std::ios::binary);
 		std::copy(screenshot.begin(), screenshot.end(), std::ostreambuf_iterator<char>(file));
 	}
-	::MessageBox(this->hwnd, (L"Zapisano zrzut ekranu: "s + path.wstring()).c_str(), L"Sukces", MB_OK);
-	/*ShellExecute(NULL, "open", "http://dreamincode.net",
-		NULL, NULL, SW_SHOWNORMAL);*/
+	auto absolutePath = canonical(path).wstring();
+	::ShellExecute(NULL, L"open", absolutePath.c_str(),
+		NULL, NULL, SW_SHOWNORMAL);
+	::MessageBox(this->hwnd, (L"Zapisano zrzut ekranu: "s + absolutePath).c_str(), L"Sukces", MB_OK | MB_ICONINFORMATION);
+	
 
 }
 
@@ -141,7 +143,7 @@ LRESULT ClientHandlerWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lPar
 			10, 110, 250, 50, this->hwnd, (HMENU)GET_SCREENSHOT_BTN, this->hInstance,
 			NULL
 		);
-		this->clipboardListBox = CreateWindowEx(WS_EX_CLIENTEDGE, L"LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL| ES_AUTOVSCROLL,
+		this->clipboardListBox = CreateWindowEx(WS_EX_CLIENTEDGE, L"LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL,
 			270, 10, 1000, 700, hwnd, NULL, hInstance, NULL);
 
 		return 0;
